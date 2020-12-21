@@ -3,27 +3,28 @@ const mongoose = require('mongoose');
 const qsSchema = new mongoose.Schema({
     head: {
         type: String,
-        required: true,
+        required: [true, 'Question head is required'],
+        unique: true,
     },
     firstChoice: {
         type: String,
-        required: true,
+        required: [true, 'first choice is required'],
     },
     secondChoice: {
         type: String,
-        required: true,
+        required: [true, 'second choice is required'],
     },
     thirdChoice: {
         type: String,
-        required: true,
+        required: [true, 'third choice is required'],
     },
     forthChoice: {
         type: String,
-        required: true,
+        required: [true, 'forth choice is required'],
     },
     correctAnswer: {
         type: String,
-        required: true,
+        required: [true, 'the correct choice is required'],
     },
     grade: {
         type: Number,
