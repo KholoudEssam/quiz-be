@@ -1,5 +1,5 @@
 const express = require('express');
-const { protected } = require('../middlewares/auth');
+const { protected, authorize } = require('../middlewares/auth');
 
 const {
     getQuestions,
@@ -10,10 +10,10 @@ const {
 } = require('../controllers/questions');
 const router = express.Router();
 
-router.get('/', getQuestions);
-router.get('/:id', getQuestion);
-router.post('/', protected, addQuestion);
-router.put('/:id', protected, updateQuestion);
-router.delete('/:id', protected, deleteQuestion);
+router.get('/', protected, getQuestions);
+router.get('/:id', protected, getQuestion);
+router.post('/', protected, authorize, addQuestion);
+router.put('/:id', protected, authorize, updateQuestion);
+router.delete('/:id', protected, authorize, deleteQuestion);
 
 module.exports = router;
