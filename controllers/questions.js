@@ -21,6 +21,7 @@ exports.getQuestion = asyncHandler(async (req, res, next) => {
 });
 
 exports.addQuestion = asyncHandler(async (req, res, next) => {
+    req.body.adminID = req.user._id;
     const quest = await Question.create(req.body);
 
     res.status(201).send(quest);

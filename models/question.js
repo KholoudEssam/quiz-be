@@ -30,6 +30,11 @@ const qsSchema = new mongoose.Schema({
         type: Number,
         default: 1,
     },
+    adminID: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true,
+    },
 });
 
 module.exports = mongoose.model('Question', qsSchema);

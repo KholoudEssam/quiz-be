@@ -18,7 +18,18 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 });
 
 exports.addUser = asyncHandler(async (req, res, next) => {
-    const user = await User.create(req.body);
+    let user;
+    //Admin must have an email
+    if (req.body.role === 'admin' && !req.body.email)
+        return next(new ErrorResponse(`Email is required`, 400));
+
+    //check if email is already exist
+    if (req.body.role === 'admin' && req.body.email) {
+        user = await User.findOne({ email: req.body.email });
+        if (user)
+            return next(new ErrorResponse(`User is already registered`, 400));
+    }
+    user = await User.create(req.body);
     res.status(201).send(user);
 });
 
