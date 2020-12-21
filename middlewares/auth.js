@@ -34,16 +34,3 @@ exports.authorize = (req, res, next) => {
     }
     next();
 };
-
-// exports.authorize = asyncHandler((req, res, next) => {
-
-//     if (!req.user.role === 'admin') {
-//         return next(
-//             new ErrorResponse(
-//                 `User role ${req.user.role} can not access this route`,
-//                 403
-//             )
-//         );
-//     }
-//     next();
-// });
