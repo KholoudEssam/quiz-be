@@ -22,12 +22,12 @@ exports.protected = asyncHandler(async (req, res, next) => {
         next(error.message);
     }
 });
-// Grant access to specific role
+// Grant access to specific role (admin)
 exports.authorize = (req, res, next) => {
-    if (!req.user.role === 'admin') {
+    if (!(req.user.role === 'admin')) {
         return next(
             new ErrorResponse(
-                `User role ${req.user.role} can not access this route`,
+                `User role '${req.user.role}' can not access this route`,
                 403
             )
         );
