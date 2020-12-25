@@ -15,7 +15,6 @@ const errorHandler = require('./middlewares/error');
 const port = process.env.PORT;
 
 app.use(cors());
-
 app.use(express.json());
 
 app.use('/api/questions', qsRouter);

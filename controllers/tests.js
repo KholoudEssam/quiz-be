@@ -1,5 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
+const { sendMail } = require('../utils/sendEmail');
 const Question = require('../models/question');
 const Test = require('../models/test');
 const UserTest = require('../models/user_test');
@@ -81,6 +82,7 @@ exports.correctTest = asyncHandler(async (req, res, next) => {
 
     const testReport = await compareAnswers(qsData, testQandA, userId, testId);
 
+    sendMail('kholoud.essam9696@gmail.com');
     res.status(200).send(testReport);
 });
 

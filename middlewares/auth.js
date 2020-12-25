@@ -33,7 +33,7 @@ exports.authorize = (req, res, next) => {
     }
     next();
 };
-
+// Grant access to specific role (student) -- for test
 exports.authorizeStudent = (req, res, next) => {
     if (!(req.user.role === 'student')) {
         return next(
