@@ -3,8 +3,24 @@ const asyncHandler = require('../middlewares/async');
 const Question = require('../models/question');
 
 exports.getQuestions = asyncHandler(async (req, res, next) => {
+    // if(!req.user)
+    // return next(
+    //     new ErrorResponse(
+    //         `login in to check this route`,
+    //         401
+    //     )
+    // );
+
     const quests = await Question.find();
-    res.status(200).send(quests);
+
+    // //to convert _id to id
+    // quests = quests.map((q) => {
+    //     const { _id, ...otherProps } = q._doc;
+    //     const newObj = { id: _id, ...otherProps };
+    //     return newObj;
+    // });
+
+    res.status(200).send({ QuestionsNumber: quests.length, quests });
 });
 
 exports.getQuestion = asyncHandler(async (req, res, next) => {

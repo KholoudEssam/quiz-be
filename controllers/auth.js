@@ -17,7 +17,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     const token = await user.getToken();
 
-    res.status(201).send({ token });
+    res.status(200).send({ token, role: user.role });
 
     //Admin must have an email
     // if (req.body.role === 'admin' && !req.body.email)

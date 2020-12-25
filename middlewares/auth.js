@@ -19,7 +19,7 @@ exports.protected = asyncHandler(async (req, res, next) => {
         req.user = await User.findById(decoded.id);
         next();
     } catch (error) {
-        next(error.message);
+        next(new ErrorResponse('invalid token', 400));
     }
 });
 // Grant access to specific role (admin)
