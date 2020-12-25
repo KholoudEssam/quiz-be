@@ -10,8 +10,8 @@ const {
 } = require('../controllers/questions');
 const router = express.Router();
 
-router.get('/', protected, getQuestions);
-router.get('/:id', protected, getQuestion);
+router.get('/', protected, authorize, getQuestions);
+router.get('/:id', protected, authorize, getQuestion);
 router.post('/', protected, authorize, addQuestion);
 router.put('/:id', protected, authorize, updateQuestion);
 router.delete('/:id', protected, authorize, deleteQuestion);

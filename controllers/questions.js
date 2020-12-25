@@ -3,22 +3,7 @@ const asyncHandler = require('../middlewares/async');
 const Question = require('../models/question');
 
 exports.getQuestions = asyncHandler(async (req, res, next) => {
-    // if(!req.user)
-    // return next(
-    //     new ErrorResponse(
-    //         `login in to check this route`,
-    //         401
-    //     )
-    // );
-
     const quests = await Question.find();
-
-    // //to convert _id to id
-    // quests = quests.map((q) => {
-    //     const { _id, ...otherProps } = q._doc;
-    //     const newObj = { id: _id, ...otherProps };
-    //     return newObj;
-    // });
 
     res.status(200).send({ QuestionsNumber: quests.length, quests });
 });
@@ -44,10 +29,7 @@ exports.addQuestion = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateQuestion = asyncHandler(async (req, res, next) => {
-    const quest = await Question.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
+    let quest = await Question.findById(req.params.id);
     if (!quest)
         return next(
             new ErrorResponse(
@@ -55,11 +37,21 @@ exports.updateQuestion = asyncHandler(async (req, res, next) => {
                 404
             )
         );
+    //Only admin who adds this question can edit it
+    if (quest.adminID.toString() !== req.user._id.toString()) {
+        return next(
+            new ErrorResponse(`Not allowed to edit this question`, 403)
+        );
+    }
+    quest = await Question.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+    });
     res.status(200).send(quest);
 });
 
 exports.deleteQuestion = asyncHandler(async (req, res, next) => {
-    const quest = await Question.findByIdAndRemove(req.params.id);
+    let quest = await Question.findById(req.params.id);
     if (!quest)
         return next(
             new ErrorResponse(
@@ -67,6 +59,14 @@ exports.deleteQuestion = asyncHandler(async (req, res, next) => {
                 404
             )
         );
+    //Only admin who adds this question can delete it
+    if (quest.adminID.toString() !== req.user._id.toString()) {
+        return next(
+            new ErrorResponse(`Not allowed to delete this question`, 403)
+        );
+    }
+
+    await Question.findByIdAndRemove(req.params.id);
 
     res.status(200).send({ message: 'Deleted!' });
 });

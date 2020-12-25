@@ -10,8 +10,8 @@ const {
 } = require('../controllers/users');
 const router = express.Router();
 
-router.get('/', protected, getUsers);
-router.get('/:id', protected, getUser);
+router.get('/', protected, authorize, getUsers);
+router.get('/:id', protected, authorize, getUser);
 router.post('/', protected, authorize, addUser);
 router.put('/:id', protected, authorize, updateUser);
 router.delete('/:id', protected, authorize, deleteUser);

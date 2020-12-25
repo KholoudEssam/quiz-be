@@ -2,6 +2,13 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
 const Question = require('../models/question');
 const Test = require('../models/test');
+const UserTest = require('../models/user_test');
+
+/*
+ * Only students can call generate&correct test
+    tests generated randomly on user click (Start Test)
+    questions may repeat but every student has a different testID
+ */
 
 exports.generateTest = asyncHandler(async (req, res, next) => {
     const qsNumberInDB = await Question.find().countDocuments();
@@ -49,20 +56,19 @@ exports.generateTest = asyncHandler(async (req, res, next) => {
     res.status(200).send({ testId: test._id, qsHeadAndAnswers });
 });
 
-/*  req.body =>
+/*  req.body.testQandA => 
  * {
      testId: 456454,
      testQandA:[
-         {questionId: 456457, userAnswer: saf},
-         {questionId: 456458, userAnswer: saf},
+         {questionId: 456457, questionHead: safdaf, userAnswer: saf},
+         {questionId: 456458, questionHead: safdaf, userAnswer: saf},
          ---------------
      ]
     } 
  */
 exports.correctTest = asyncHandler(async (req, res, next) => {
-    //const userId = req.user._id; //current logged in user -who had the test
-    const { testId } = req.body;
-    const { testQandA } = req.body;
+    const userId = req.user._id; //current logged in user -who had the test
+    const { testId, testQandA } = req.body;
 
     const testData = await Test.findById(testId);
     if (!testData) {
@@ -73,33 +79,45 @@ exports.correctTest = asyncHandler(async (req, res, next) => {
     //questionsID and correctAnswer of the test
     const qsData = testData.questionsData;
 
-    let userGrade = compareAnswers(qsData, testQandA);
+    const testReport = await compareAnswers(qsData, testQandA, userId, testId);
 
-    console.log(userGrade);
-
-    // console.log(testQandA);
-    // console.log(qsData);
-    // console.log(typeof qsData[0].questionId);
-    // console.log(typeof testQandA[0].questionId);
-
-    res.status(200).send({ message: 'Ok' });
+    res.status(200).send(testReport);
 });
 
-const compareAnswers = (correctAnswers, userAnswers) => {
+const compareAnswers = async (correctAnswers, userAnswers, userID, testID) => {
     let grade = 0;
-    for (let i = 0; i < correctAnswers.length; i++) {
-        for (let j = 0; j < userAnswers.length; j++) {
-            if (
-                correctAnswers[i].questionId.toString() ===
-                userAnswers[j].questionId
-            ) {
+
+    let userTest = new UserTest();
+    userTest.userId = userID;
+    userTest.testId = testID;
+
+    try {
+        for (let i = 0; i < correctAnswers.length; i++) {
+            for (let j = 0; j < userAnswers.length; j++) {
                 if (
-                    correctAnswers[i].correctAns === userAnswers[j].userAnswer
+                    correctAnswers[i].questionId.toString() ===
+                    userAnswers[j].questionId
                 ) {
-                    grade++;
+                    if (
+                        correctAnswers[i].correctAns ===
+                        userAnswers[j].userAnswer
+                    ) {
+                        grade++;
+                    }
+                    userTest.questionsData.push({
+                        qsId: correctAnswers[i].questionId,
+                        questionHead: userAnswers[j].questionHead,
+                        userAns: userAnswers[j].userAnswer,
+                        correctAns: correctAnswers[i].correctAns,
+                    });
                 }
             }
         }
+        userTest.userGrade = grade;
+        userTest = await userTest.save();
+    } catch (error) {
+        return next(new ErrorResponse(`error!! ${error.message}`, 500));
     }
-    return grade;
+
+    return userTest;
 };

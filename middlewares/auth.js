@@ -14,7 +14,6 @@ exports.protected = asyncHandler(async (req, res, next) => {
         );
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // console.log(decoded);
         //get the logged in user and store it in the req
         req.user = await User.findById(decoded.id);
         next();
@@ -25,6 +24,18 @@ exports.protected = asyncHandler(async (req, res, next) => {
 // Grant access to specific role (admin)
 exports.authorize = (req, res, next) => {
     if (!(req.user.role === 'admin')) {
+        return next(
+            new ErrorResponse(
+                `User role '${req.user.role}' can not access this route`,
+                403
+            )
+        );
+    }
+    next();
+};
+
+exports.authorizeStudent = (req, res, next) => {
+    if (!(req.user.role === 'student')) {
         return next(
             new ErrorResponse(
                 `User role '${req.user.role}' can not access this route`,

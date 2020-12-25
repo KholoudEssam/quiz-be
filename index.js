@@ -15,10 +15,6 @@ const errorHandler = require('./middlewares/error');
 const port = process.env.PORT;
 
 app.use(cors());
-// app.use('*', (req, res, next) => {
-//     res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
-//     next();
-// });
 
 app.use(express.json());
 

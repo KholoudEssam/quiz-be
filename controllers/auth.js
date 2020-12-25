@@ -18,10 +18,4 @@ exports.login = asyncHandler(async (req, res, next) => {
     const token = await user.getToken();
 
     res.status(200).send({ token, role: user.role });
-
-    //Admin must have an email
-    // if (req.body.role === 'admin' && !req.body.email)
-    //     return next(new ErrorResponse(`Email is required`, 400));
-    // const user = await User.create(req.body);
-    // res.status(201).send(user);
 });
