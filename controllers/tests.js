@@ -3,6 +3,7 @@ const asyncHandler = require('../middlewares/async');
 const { sendMail } = require('../utils/sendEmail');
 const Question = require('../models/question');
 const Test = require('../models/test');
+const User = require('../models/user');
 const UserTest = require('../models/user_test');
 
 /*
@@ -82,7 +83,10 @@ exports.correctTest = asyncHandler(async (req, res, next) => {
 
     const testReport = await compareAnswers(qsData, testQandA, userId, testId);
 
-    sendMail('kholoud.essam9696@gmail.com');
+    //send mail to admins after submitting the test
+    const admins = await User.find({ role: 'admin' }).select('email');
+    const emails = admins.map((val) => val.email);
+    sendMail(emails);
     res.status(200).send(testReport);
 });
 
