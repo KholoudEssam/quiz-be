@@ -33,25 +33,38 @@ exports.addUser = asyncHandler(async (req, res, next) => {
     res.status(201).send(user);
 });
 
+// It is not allowed to edit or remove user 'admin'
+
 exports.updateUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
+    let user = await User.findById(req.params.id);
     if (!user)
         return next(
             new ErrorResponse(`User with ID ${req.params.id} is not exist`, 404)
         );
+    if (user.role === 'admin' && user.username === 'admin')
+        return next(
+            new ErrorResponse(`You Can NOT update user ${user.username}`, 403)
+        );
+    user = await User.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+    });
 
     res.status(200).send(user);
 });
 
 exports.deleteUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findByIdAndRemove(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user)
         return next(
             new ErrorResponse(`User with ID ${req.params.id} is not exist`, 404)
         );
+    if (user.role === 'admin' && user.username === 'admin')
+        return next(
+            new ErrorResponse(`You Can NOT delete user ${user.username}`, 403)
+        );
+
+    await User.findByIdAndRemove(req.params.id);
 
     res.status(200).send({ message: 'Deleted!' });
 });
