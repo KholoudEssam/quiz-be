@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
     email: {
         //only if role is admin to recieve email after test completion
         type: String,
-        unique: true,
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'Please add a valid email',
