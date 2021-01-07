@@ -1,6 +1,7 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middlewares/async');
 const User = require('../models/user');
+const Question = require('../models/question');
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
     const users = await User.find().sort({ role: 1 });
@@ -65,6 +66,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
         );
 
     await User.findByIdAndRemove(req.params.id);
+    await Question.deleteMany({ adminID: req.params.id });
 
     res.status(200).send({ message: 'Deleted!' });
 });

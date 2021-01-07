@@ -39,9 +39,10 @@ userSchema.pre('save', async function () {
 });
 
 userSchema.methods.getToken = function () {
-    return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
-    });
+    // return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
+    //     expiresIn: process.env.JWT_EXPIRE,
+    // });
+    return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET);
 };
 
 userSchema.methods.matchPasswords = async function (enteredPassword) {

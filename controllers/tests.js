@@ -6,15 +6,50 @@ const Test = require('../models/test');
 const User = require('../models/user');
 const UserTest = require('../models/user_test');
 
-// exports.getTest = asyncHandler(async (req, res, next) => {
-//     const test = await Test.findById(req.params.id);
-//     if (!test)
-//         return next(
-//             new ErrorResponse(`Test with ID ${req.params.id} is not exist`, 404)
-//         );
+exports.getTest = asyncHandler(async (req, res, next) => {
+    const test = await Test.findById(req.params.id);
+    if (!test)
+        return next(
+            new ErrorResponse(`Test with ID ${req.params.id} is not exist`, 404)
+        );
 
-//     res.status(200).send(test);
+    res.status(200).send(test);
+});
+
+exports.deleteTest = asyncHandler(async (req, res, next) => {
+    // const test = await Test.findById(req.params.id);
+    // if (!test)
+    //     return next(
+    //         new ErrorResponse(`Test with ID ${req.params.id} is not exist`, 404)
+    //     );
+
+    // await Test.findByIdAndRemove(req.params.id);
+
+    // const userTest = await UserTest.findOne({ testId: req.params.id });
+    // if (!userTest)
+    //     return next(
+    //         new ErrorResponse(`Test with ID ${req.params.id} is not exist`, 404)
+    //     );
+    await UserTest.findOneAndRemove({ testId: req.params.id });
+    res.status(200).send({ message: 'Deleted!' });
+});
+
+// exports.getTests = asyncHandler(async (req, res, next) => {
+//     const tests = await User.find();
+
+//     // console.log(tests);
+//     res.status(200).send({tests});
 // });
+
+exports.getUsersTest = asyncHandler(async (req, res, next) => {
+    const tests = await UserTest.find().populate({
+        path: 'userId',
+        select: 'username',
+    });
+
+    // console.log(tests);
+    res.status(200).send(tests);
+});
 
 /*
  * Only students can call generate&correct test
@@ -98,7 +133,7 @@ exports.correctTest = asyncHandler(async (req, res, next) => {
     //send mail to admins after submitting the test
     const admins = await User.find({ role: 'admin' }).select('email');
     const emails = admins.map((val) => val.email);
-    // sendMail(emails);
+    sendMail(emails);
     res.status(200).send(testReport);
 });
 
