@@ -14,7 +14,7 @@ const errorHandler = (err, req, res, next) => {
         // extract only message
         const msg = Object.values(err.errors).map((val) => val.message);
         // console.log(Object.values(err.errors));
-
+        console.log('error');
         error = new ErrorResponse(msg, 400);
     }
     //duplication error

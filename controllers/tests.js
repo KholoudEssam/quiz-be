@@ -6,6 +6,16 @@ const Test = require('../models/test');
 const User = require('../models/user');
 const UserTest = require('../models/user_test');
 
+// exports.getTest = asyncHandler(async (req, res, next) => {
+//     const test = await Test.findById(req.params.id);
+//     if (!test)
+//         return next(
+//             new ErrorResponse(`Test with ID ${req.params.id} is not exist`, 404)
+//         );
+
+//     res.status(200).send(test);
+// });
+
 /*
  * Only students can call generate&correct test
     tests generated randomly on user click (Start Test)
@@ -36,6 +46,7 @@ exports.generateTest = asyncHandler(async (req, res, next) => {
     // to get all questions info to send to api consumer - are not saved in db
     const qsHeadAndAnswers = sampleQs.map((qs) => {
         const {
+            _id,
             head,
             firstChoice,
             secondChoice,
@@ -43,6 +54,7 @@ exports.generateTest = asyncHandler(async (req, res, next) => {
             forthChoice,
         } = qs;
         return {
+            _id,
             head,
             firstChoice,
             secondChoice,
@@ -86,7 +98,7 @@ exports.correctTest = asyncHandler(async (req, res, next) => {
     //send mail to admins after submitting the test
     const admins = await User.find({ role: 'admin' }).select('email');
     const emails = admins.map((val) => val.email);
-    sendMail(emails);
+    // sendMail(emails);
     res.status(200).send(testReport);
 });
 

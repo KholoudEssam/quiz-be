@@ -3,7 +3,7 @@ const asyncHandler = require('../middlewares/async');
 const Question = require('../models/question');
 
 exports.getQuestions = asyncHandler(async (req, res, next) => {
-    const quests = await Question.find();
+    const quests = await Question.find().populate('adminID', 'username');
 
     res.status(200).send({ QuestionsNumber: quests.length, quests });
 });

@@ -3,7 +3,7 @@ const asyncHandler = require('../middlewares/async');
 const User = require('../models/user');
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
-    const users = await User.find();
+    const users = await User.find().sort({ role: 1 });
     res.status(200).send(users);
 });
 

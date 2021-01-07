@@ -13,6 +13,7 @@ exports.protected = asyncHandler(async (req, res, next) => {
             new ErrorResponse('Not authorized to access this route', 401)
         );
     try {
+        //decoded => payload (id, role)
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         //get the logged in user and store it in the req
         req.user = await User.findById(decoded.id);

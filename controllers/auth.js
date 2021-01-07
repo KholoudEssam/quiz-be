@@ -17,5 +17,10 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     const token = await user.getToken();
 
-    res.status(200).send({ token, role: user.role });
+    res.status(200).send({
+        token,
+        userId: user._id,
+        role: user.role,
+        username: user.username,
+    });
 });

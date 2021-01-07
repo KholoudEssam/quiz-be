@@ -1,8 +1,9 @@
 const express = require('express');
 const { protected, authorizeStudent } = require('../middlewares/auth');
-const { generateTest, correctTest } = require('../controllers/tests');
+const { getTest, generateTest, correctTest } = require('../controllers/tests');
 const router = express.Router();
 
+// router.get('/:id', protected, getTest);
 router.get('/generate', protected, authorizeStudent, generateTest);
 router.post('/correct', protected, authorizeStudent, correctTest);
 
